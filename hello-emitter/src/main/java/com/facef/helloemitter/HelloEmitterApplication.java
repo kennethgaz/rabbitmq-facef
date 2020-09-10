@@ -7,14 +7,14 @@ import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
 public class HelloEmitterApplication {
-	static final String queueName = "hello-queue";
-	
-	@Bean
-	Queue queue() {
-		return new Queue(queueName, false);
-	}
+  static final String queueName = "hello-queue";
 
-	public static void main(String[] args) {
-		SpringApplication.run(HelloEmitterApplication.class, args);
-	}
+  @Bean
+  Queue queue() {
+    return new Queue(queueName, false);
+  }
+
+  public static void main(String[] args) {
+    SpringApplication.run(HelloEmitterApplication.class, args);
+  }
 }
