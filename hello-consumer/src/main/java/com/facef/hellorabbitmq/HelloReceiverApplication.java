@@ -14,7 +14,7 @@ public class HelloReceiverApplication {
 
   @Bean
   Queue queue() {
-    return new Queue(queueName, false);
+    return new Queue(HelloReceiverApplication.queueName, false);
   }
 
   @Bean
@@ -22,7 +22,7 @@ public class HelloReceiverApplication {
                                            MessageListenerAdapter listenerAdapter) {
     SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
     container.setConnectionFactory(connectionFactory);
-    container.setQueueNames(queueName);
+    container.setQueueNames(HelloReceiverApplication.queueName);
     container.setMessageListener(listenerAdapter);
     return container;
   }

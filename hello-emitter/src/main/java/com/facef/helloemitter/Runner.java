@@ -16,7 +16,7 @@ public class Runner implements CommandLineRunner {
   public void run(String... args) throws Exception {
     System.out.println("Enviando mensagem...");
 
-    rabbitTemplate.convertAndSend(HelloEmitterApplication.queueName, "Hello from RabbitMQ!");
+    this.rabbitTemplate.convertAndSend(HelloEmitterApplication.queueName, "Hello from RabbitMQ!");
 
     System.out.println("Mensagem enviada");
   }

@@ -11,7 +11,7 @@ public class HelloEmitterApplication {
 
   @Bean
   Queue queue() {
-    return new Queue(queueName, false);
+    return new Queue(HelloEmitterApplication.queueName, false);
   }
 
   public static void main(String[] args) {
