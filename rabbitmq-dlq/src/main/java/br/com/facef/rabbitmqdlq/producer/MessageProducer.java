@@ -3,7 +3,10 @@ package br.com.facef.rabbitmqdlq.producer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.amqp.core.Message;
 import org.springframework.stereotype.Service;
+
+import java.nio.charset.StandardCharsets;
 
 import static br.com.facef.rabbitmqdlq.configuration.DirectExchangeConfiguration.*;
 
@@ -23,10 +26,20 @@ public class MessageProducer {
     );
   }
 
-  public void sendMessageToParkingLot(String message) {
-    log.info("Sending a order message to parking lot queue: " + message);
+  public void sendMessageToDlqQueue(Message message) {
+    log.info("Sending a order message to DLQ queue: " + new String(message.getBody(), StandardCharsets.UTF_8));
 
-    this.rabbitTemplate.convertAndSend(
+    this.rabbitTemplate.send(
+        DIRECT_EXCHANGE_NAME,
+        ORDER_MESSAGES_QUEUE_DLQ_NAME,
+        message
+    );
+  }
+
+  public void sendMessageToParkingLotQueue(Message message) {
+    log.info("Sending a order message to parking lot queue: " + new String(message.getBody(), StandardCharsets.UTF_8));
+
+    this.rabbitTemplate.send(
         DIRECT_EXCHANGE_NAME,
         ORDER_MESSAGES_QUEUE_PARKING_LOT_NAME,
         message

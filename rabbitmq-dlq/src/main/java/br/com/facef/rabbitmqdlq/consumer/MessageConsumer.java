@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
 
 @Configuration
 @Slf4j
@@ -45,12 +46,31 @@ public class MessageConsumer {
     int orderNumber = Integer.parseInt(messageBody.split(" ")[2]);
 
     if (orderNumber == 5) {
-      this.messageProducer.sendMessageToParkingLot(messageBody);
+      int count = this.getMessageCount(message);
 
-      log.info("Removing message {} from queue", messageBody);
-      throw new ImmediateAcknowledgeAmqpException("Unable to process message"); // error - remove message from queue
+      if (count <= 3) {
+        this.messageProducer.sendMessageToDlqQueue(message);
+
+        throw new RuntimeException("Unexpected Error"); // error - send message to dlq again
+      } else {
+        this.messageProducer.sendMessageToParkingLotQueue(message);
+
+        log.info("Removing message {} from queue", messageBody);
+        throw new ImmediateAcknowledgeAmqpException("Unable to process message"); // error - remove message from queue
+      }
     } else {
       log.info("Message {} processed with success", messageBody); // success - remove message from queue
     }
+  }
+
+  private Integer getMessageCount(Message message) {
+    String X_RETRIES_HEADER = "x-retries";
+
+    Map<String, Object> headers = message.getMessageProperties().getHeaders();
+
+    Integer retriesHeader = (Integer) headers.get(X_RETRIES_HEADER);
+    headers.put(X_RETRIES_HEADER, retriesHeader == null ? 1 : (retriesHeader + 1));
+
+    return (Integer) headers.get(X_RETRIES_HEADER);
   }
 }

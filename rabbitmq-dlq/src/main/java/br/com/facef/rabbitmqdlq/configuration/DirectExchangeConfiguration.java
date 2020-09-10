@@ -41,6 +41,11 @@ public class DirectExchangeConfiguration {
   }
 
   @Bean
+  Binding bindingOrderMessagesDeadLetterQueue(@Qualifier("orderMessagesDeadLetterQueue") Queue queue, DirectExchange exchange) {
+    return BindingBuilder.bind(queue).to(exchange).with(ORDER_MESSAGES_QUEUE_DLQ_NAME);
+  }
+
+  @Bean
   Binding bindingOrderMessagesParkingLotQueue(@Qualifier("orderMessagesParkingLotQueue") Queue queue, DirectExchange exchange) {
     return BindingBuilder.bind(queue).to(exchange).with(ORDER_MESSAGES_QUEUE_PARKING_LOT_NAME);
   }

@@ -15,5 +15,5 @@ Quando a aplicação for iniciada, 8 mensagens serão enfileiradas na fila origi
 
 Na fila de DLQ do RabbitMq:
 * A mensagem 4 será processada com sucesso e será removida da fila de DLQ;
-* A mensagem 5 será processada com erro e enviada para a fila de Parking Lot;
+* A mensagem 5 será processada com erro 3 vezes e enviada para a fila de Parking Lot;
 
