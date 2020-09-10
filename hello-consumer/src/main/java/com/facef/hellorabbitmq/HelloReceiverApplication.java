@@ -10,7 +10,6 @@ import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
 public class HelloReceiverApplication {
-
 	static final String queueName = "hello-queue";
 
 	@Bean
@@ -36,5 +35,4 @@ public class HelloReceiverApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(HelloReceiverApplication.class, args);
 	}
-
 }
