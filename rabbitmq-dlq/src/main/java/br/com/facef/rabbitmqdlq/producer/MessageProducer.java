@@ -21,27 +21,27 @@ public class MessageProducer {
 
     this.rabbitTemplate.convertAndSend(
         DIRECT_EXCHANGE_NAME,
-        ORDER_MESSAGES_QUEUE_NAME,
+        ORDER_QUEUE_NAME,
         message
     );
   }
 
-  public void sendMessageToDlqQueue(Message message) {
+  /* public void sendMessageToDlqQueue(Message message) {
     log.info("Sending a order message to DLQ queue: " + new String(message.getBody(), StandardCharsets.UTF_8));
 
     this.rabbitTemplate.send(
         DIRECT_EXCHANGE_NAME,
-        ORDER_MESSAGES_QUEUE_DLQ_NAME,
+        ORDER_QUEUE_DLQ_NAME,
         message
     );
-  }
+  } */
 
   public void sendMessageToParkingLotQueue(Message message) {
     log.info("Sending a order message to parking lot queue: " + new String(message.getBody(), StandardCharsets.UTF_8));
 
     this.rabbitTemplate.send(
         DIRECT_EXCHANGE_NAME,
-        ORDER_MESSAGES_QUEUE_PARKING_LOT_NAME,
+        ORDER_QUEUE_PARKING_LOT_NAME,
         message
     );
   }

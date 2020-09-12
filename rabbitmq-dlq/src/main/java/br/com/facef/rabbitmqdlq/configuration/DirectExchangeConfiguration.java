@@ -8,45 +8,51 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class DirectExchangeConfiguration {
   public static final String DIRECT_EXCHANGE_NAME = "order-exchange";
-  public static final String ORDER_MESSAGES_QUEUE_NAME = "order-messages-queue";
-  public static final String ORDER_MESSAGES_QUEUE_DLQ_NAME = ORDER_MESSAGES_QUEUE_NAME + ".dlq";
-  public static final String ORDER_MESSAGES_QUEUE_PARKING_LOT_NAME = ORDER_MESSAGES_QUEUE_NAME + ".parking-lot";
+  public static final String ORDER_QUEUE_NAME = "order-queue";
+  public static final String ORDER_QUEUE_DLQ_NAME = ORDER_QUEUE_NAME + ".dlq";
+  public static final String ORDER_QUEUE_PARKING_LOT_NAME = ORDER_QUEUE_NAME + ".parking-lot";
 
-  @Bean
-  Queue orderMessagesQueue() {
-    return QueueBuilder.durable(ORDER_MESSAGES_QUEUE_NAME)
-        .withArgument("x-dead-letter-exchange", "")
-        .withArgument("x-dead-letter-routing-key", ORDER_MESSAGES_QUEUE_DLQ_NAME)
-        .build();
-  }
-
-  @Bean
-  Queue orderMessagesDeadLetterQueue() {
-    return QueueBuilder.durable(ORDER_MESSAGES_QUEUE_DLQ_NAME).build();
-  }
-
-  @Bean
-  Queue orderMessagesParkingLotQueue() {
-    return QueueBuilder.durable(ORDER_MESSAGES_QUEUE_PARKING_LOT_NAME).build();
-  }
+  // Configuring exchanges
 
   @Bean
   DirectExchange exchange() {
     return ExchangeBuilder.directExchange(DIRECT_EXCHANGE_NAME).durable(true).build();
   }
 
+  // Configuring queues
+
   @Bean
-  Binding bindingOrderMessagesQueue(@Qualifier("orderMessagesQueue") Queue queue, DirectExchange exchange) {
-    return BindingBuilder.bind(queue).to(exchange).with(ORDER_MESSAGES_QUEUE_NAME);
+  Queue orderQueue() {
+    return QueueBuilder.durable(ORDER_QUEUE_NAME)
+        .withArgument("x-dead-letter-exchange", "")
+        .withArgument("x-dead-letter-routing-key", ORDER_QUEUE_DLQ_NAME)
+        .build();
   }
 
   @Bean
-  Binding bindingOrderMessagesDeadLetterQueue(@Qualifier("orderMessagesDeadLetterQueue") Queue queue, DirectExchange exchange) {
-    return BindingBuilder.bind(queue).to(exchange).with(ORDER_MESSAGES_QUEUE_DLQ_NAME);
+  Queue orderDeadLetterQueue() {
+    return QueueBuilder.durable(ORDER_QUEUE_DLQ_NAME).build();
   }
 
   @Bean
-  Binding bindingOrderMessagesParkingLotQueue(@Qualifier("orderMessagesParkingLotQueue") Queue queue, DirectExchange exchange) {
-    return BindingBuilder.bind(queue).to(exchange).with(ORDER_MESSAGES_QUEUE_PARKING_LOT_NAME);
+  Queue orderParkingLotQueue() {
+    return QueueBuilder.durable(ORDER_QUEUE_PARKING_LOT_NAME).build();
+  }
+
+  // Binding
+
+  @Bean
+  Binding bindingOrderQueue(@Qualifier("orderQueue") Queue queue, DirectExchange exchange) {
+    return BindingBuilder.bind(queue).to(exchange).with(ORDER_QUEUE_NAME);
+  }
+
+  @Bean
+  Binding bindingOrderDeadLetterQueue(@Qualifier("orderDeadLetterQueue") Queue queue, DirectExchange exchange) {
+    return BindingBuilder.bind(queue).to(exchange).with(ORDER_QUEUE_DLQ_NAME);
+  }
+
+  @Bean
+  Binding bindingOrderParkingLotQueue(@Qualifier("orderParkingLotQueue") Queue queue, DirectExchange exchange) {
+    return BindingBuilder.bind(queue).to(exchange).with(ORDER_QUEUE_PARKING_LOT_NAME);
   }
 }
